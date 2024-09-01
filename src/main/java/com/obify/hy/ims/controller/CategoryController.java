@@ -12,35 +12,40 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/v1/auth/category")
+@RequestMapping("/api/v1/auth")
 public class CategoryController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
 
-    @PostMapping()
+    @PostMapping("/categories")
     public ResponseEntity<CategoryDTO> add
             (@Valid @RequestBody CategoryDTO categoryDTO) {
         return new ResponseEntity<>(categoryService.add(categoryDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryDTO> update
             (@Valid @RequestBody CategoryDTO categoryDTO,@PathVariable String id) {
         return new ResponseEntity<>(categoryService.update(categoryDTO, id), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getAll() {
         return new ResponseEntity<>(categoryService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryDTO> get(@PathVariable String id) {
         return new ResponseEntity<>(categoryService.get(id), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        return new ResponseEntity<>(categoryService.delete(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/categories/search")
     public ResponseEntity<List<CategoryDTO>> search(@RequestBody CategoryDTO categoryDTO) {
         return new ResponseEntity<>(categoryService.search(categoryDTO), HttpStatus.OK);
     }
