@@ -6,6 +6,7 @@ import com.obify.hy.ims.response.CategoryServiceResponse;
 import com.obify.hy.ims.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,11 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/cate")
-    public ResponseEntity<?> categoryRegistration(@Valid @RequestBody CategoryServiceRequest categoryServiceRequest) {
-
-        CategoryServiceResponse categoryServiceResponse = categoryService.categoryRegistration(categoryServiceRequest);
-        return ResponseEntity.ok(new MessageResponse(categoryServiceResponse.getCategory().getType()
-                +" Category registered successfully with Id: "
-                +categoryServiceResponse.getCategory().getId()));
-
+    @PostMapping()
+    public ResponseEntity<CategoryServiceResponse> categoryRegistration
+            (@Valid @RequestBody CategoryServiceRequest categoryServiceRequest) {
+        return new ResponseEntity<>(categoryService.categoryRegistration
+                (categoryServiceRequest), HttpStatus.CREATED);
     }
 
 }
