@@ -41,9 +41,6 @@ public class User {
   @NotBlank
   @Size(max = 120)
   private String password;
-
-
-
   private Set<Role> roles = new HashSet<>();
 
 }

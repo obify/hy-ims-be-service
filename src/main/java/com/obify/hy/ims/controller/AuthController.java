@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.obify.hy.ims.entity.*;
 import com.obify.hy.ims.exception.BusinessException;
+import com.obify.hy.ims.repository.MerchantManagerRepository;
+import com.obify.hy.ims.repository.MerchantVendorRepository;
+import com.obify.hy.ims.service.impl.MerchantServiceImpl;
 import com.obify.hy.ims.util.CommonUtil;
 import jakarta.validation.Valid;
 
@@ -19,9 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.obify.hy.ims.entity.ERole;
-import com.obify.hy.ims.entity.Role;
-import com.obify.hy.ims.entity.User;
 import com.obify.hy.ims.dto.LoginRequestDTO;
 import com.obify.hy.ims.dto.SignupRequestDTO;
 import com.obify.hy.ims.dto.JwtResponse;
@@ -37,13 +38,12 @@ import com.obify.hy.ims.security.services.UserDetailsImpl;
 public class AuthController {
 	@Autowired
 	AuthenticationManager authenticationManager;
-
+	@Autowired
+	private MerchantServiceImpl merchantService;
 	@Autowired
 	UserRepository userRepository;
-
 	@Autowired
 	RoleRepository roleRepository;
-
 	@Autowired
 	PasswordEncoder encoder;
 
@@ -142,4 +142,90 @@ public class AuthController {
 		UserDetailsImpl userDetails = commonUtil.loggedInUser();
 		return new ResponseEntity<>(userDetails, HttpStatus.OK);
 	}
+
+	@PostMapping("/signup-merchant")
+	public ResponseEntity<?> registerMerchant(@Valid @RequestBody SignupRequestDTO signUpRequest) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already taken!"));
+		}
+		// Create new user's account
+		User user = new User();
+		user.setFirstName(signUpRequest.getFirstName());
+		user.setLastName(signUpRequest.getLastName());
+		user.setEmail(signUpRequest.getEmail());
+		user.setPassword(encoder.encode(signUpRequest.getPassword()));
+
+		Set<Role> roles = new HashSet<>();
+
+		Role userRole = roleRepository.findByName(ERole.ROLE_MERCHANT)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+		user.setRoles(roles);
+		userRepository.save(user);
+
+		return ResponseEntity.ok(new MessageResponse("Merchant registered successfully!"));
+	}
+
+	@PostMapping("/signup-manager")
+	public ResponseEntity<?> registerManager(@Valid @RequestBody SignupRequestDTO signUpRequest) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already taken!"));
+		}
+		// Create new user's account
+		User user = new User();
+		user.setFirstName(signUpRequest.getFirstName());
+		user.setLastName(signUpRequest.getLastName());
+		user.setEmail(signUpRequest.getEmail());
+		user.setPassword(encoder.encode(signUpRequest.getPassword()));
+
+		Set<Role> roles = new HashSet<>();
+
+		Role userRole = roleRepository.findByName(ERole.ROLE_MANAGER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+		user.setRoles(roles);
+		user = userRepository.save(user);
+
+		UserDetailsImpl userDetails = commonUtil.loggedInUser();
+		MerchantManager mm = new MerchantManager();
+		mm.setManagerId(user.getId());
+		mm.setMerchantId(userDetails.getId());
+		mm = merchantService.saveManager(mm);
+		return ResponseEntity.ok(new MessageResponse("Manager registered successfully with Id: "+mm.getId()));
+	}
+
+	@PostMapping("/signup-vendor")
+	public ResponseEntity<?> registerVendor(@Valid @RequestBody SignupRequestDTO signUpRequest) {
+		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Error: Email is already taken!"));
+		}
+		// Create new user's account
+		User user = new User();
+		user.setFirstName(signUpRequest.getFirstName());
+		user.setLastName(signUpRequest.getLastName());
+		user.setEmail(signUpRequest.getEmail());
+		user.setPassword(encoder.encode(signUpRequest.getPassword()));
+
+		Set<Role> roles = new HashSet<>();
+		Role userRole = roleRepository.findByName(ERole.ROLE_VENDOR)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(userRole);
+		user.setRoles(roles);
+		user = userRepository.save(user);
+
+		UserDetailsImpl userDetails = commonUtil.loggedInUser();
+		MerchantVendor mv = new MerchantVendor();
+		mv.setVendorId(user.getId());
+		mv.setMerchantId(userDetails.getId());
+		mv = merchantService.saveVendor(mv);
+
+		return ResponseEntity.ok(new MessageResponse("Vendor registered successfully with Id: "+mv.getId()));
+	}
+
 }
