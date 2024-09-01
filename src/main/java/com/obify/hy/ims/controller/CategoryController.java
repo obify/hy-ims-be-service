@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/auth/category")
@@ -17,9 +19,30 @@ public class CategoryController {
     private CategoryServiceImpl categoryService;
 
     @PostMapping()
-    public ResponseEntity<CategoryDTO> categoryRegistration
+    public ResponseEntity<CategoryDTO> add
             (@Valid @RequestBody CategoryDTO categoryDTO) {
         return new ResponseEntity<>(categoryService.add(categoryDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryDTO> update
+            (@Valid @RequestBody CategoryDTO categoryDTO,@PathVariable String id) {
+        return new ResponseEntity<>(categoryService.update(categoryDTO, id), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAll() {
+        return new ResponseEntity<>(categoryService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryDTO> get(@PathVariable String id) {
+        return new ResponseEntity<>(categoryService.get(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CategoryDTO>> search(@RequestBody CategoryDTO categoryDTO) {
+        return new ResponseEntity<>(categoryService.search(categoryDTO), HttpStatus.OK);
     }
 
 }
