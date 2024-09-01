@@ -1,14 +1,11 @@
 package com.obify.hy.ims.controller;
 
-import com.obify.hy.ims.dto.MessageResponse;
-import com.obify.hy.ims.request.CategoryServiceRequest;
-import com.obify.hy.ims.response.CategoryServiceResponse;
-import com.obify.hy.ims.service.CategoryService;
+import com.obify.hy.ims.dto.CategoryDTO;
+import com.obify.hy.ims.service.impl.CategoryServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -17,13 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryServiceImpl categoryService;
 
     @PostMapping()
-    public ResponseEntity<CategoryServiceResponse> categoryRegistration
-            (@Valid @RequestBody CategoryServiceRequest categoryServiceRequest) {
-        return new ResponseEntity<>(categoryService.categoryRegistration
-                (categoryServiceRequest), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> categoryRegistration
+            (@Valid @RequestBody CategoryDTO categoryDTO) {
+        return new ResponseEntity<>(categoryService.add(categoryDTO), HttpStatus.CREATED);
     }
 
 }

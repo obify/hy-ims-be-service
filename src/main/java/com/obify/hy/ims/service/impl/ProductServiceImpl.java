@@ -15,17 +15,17 @@ public class ProductServiceImpl implements ImsService<ProductDTO, ProductDTO> {
     }
 
     @Override
-    public ProductDTO update(ProductDTO input, Long id) {
+    public ProductDTO update(ProductDTO input, String id) {
         return null;
     }
 
     @Override
-    public ProductDTO delete(Long id) {
+    public String delete(String id) {
         return null;
     }
 
     @Override
-    public ProductDTO get(Long id) {
+    public ProductDTO get(String id) {
         return null;
     }
 
