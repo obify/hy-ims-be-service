@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +19,10 @@ public class Product {
     private String name;
     private Double price;
     private Integer quantity;
+    private String categoryId;
+    private String managerId;
+    private List<String> locations;
+    private String vendorId;
+    private LocalDateTime createdDateTime;
+    private LocalDateTime updatedDateTime;
 }

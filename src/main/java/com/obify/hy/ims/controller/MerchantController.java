@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/merchants")
+@RequestMapping("/api/v1/auth")
 public class MerchantController {
 
     @Autowired
@@ -23,14 +23,14 @@ public class MerchantController {
     @Autowired
     CommonUtil commonUtil;
 
-    @GetMapping("/managers")
+    @GetMapping("/merchants/managers")
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<List<UserDTO>> getAllManagers(){
         UserDetailsImpl userDetails = commonUtil.loggedInUser();
         return new ResponseEntity<>(merchantService.getAllManagersForMerchant(userDetails.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/vendors")
+    @GetMapping("/merchants/vendors")
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<List<UserDTO>> getAllVendors(){
         UserDetailsImpl userDetails = commonUtil.loggedInUser();
