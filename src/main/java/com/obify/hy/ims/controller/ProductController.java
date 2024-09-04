@@ -34,13 +34,13 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    @PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<List<ProductDTO>> getAll() {
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/products/{id}")
-    @PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> get(@PathVariable String id) {
         return new ResponseEntity<>(productService.get(id), HttpStatus.OK);
     }
@@ -51,7 +51,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.delete(id), HttpStatus.OK);
     }
 
-    @GetMapping("/categories/search")
+    @GetMapping("/products/search")
     @PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<List<ProductDTO>> search(@RequestBody ProductDTO productDTO) {
         return new ResponseEntity<>(productService.search(productDTO), HttpStatus.OK);

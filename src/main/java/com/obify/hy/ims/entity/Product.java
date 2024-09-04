@@ -25,4 +25,5 @@ public class Product {
     private String vendorId;
     private LocalDateTime createdDateTime;
     private LocalDateTime updatedDateTime;
+    private ECurrency currency;
 }

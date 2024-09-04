@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "bbd3e116-87e2-437a-9ab7-78d18fd4e753",
+		"name": "hy-ims",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "4599996",
+		"_collection_link": "https://hym-ims-api-team.postman.co/workspace/HYM-IMS-API-Team-Workspace~607c1c71-1dd0-438e-a77a-25b2c6e2caea/collection/4599996-bbd3e116-87e2-437a-9ab7-78d18fd4e753?action=share&source=collection_link&creator=4599996"
+	},
+	"item": [
+		{
+			"name": "New Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"merchant\",\r\n    \"lastName\": \"one\",\r\n    \"password\": \"secret\",\r\n    \"email\": \"merchantone@gmail.com\",\r\n    \"roles\": [\"ROLE_ADMIN\",\"ROLE_MERCHANT\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"secret\",\r\n    \"email\": \"mersschantone@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/signin"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Restricted",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJjaGFudG9uZUBnbWFpbC5jb20iLCJpYXQiOjE3MjQzNDA0ODcsImV4cCI6MTcyNDQyNjg4N30.p3rEI5LKVkrld2uunbrDc9eSPqjc6ySC2XXkmdJT6Fg"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/test/admin"
+			},
+			"response": []
+		},
+		{
+			"name": "Get loggedIn user info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJjaGFudG9uZUBnbWFpbC5jb20iLCJpYXQiOjE3MjQ0NDUwMTMsImV4cCI6MTcyNDUzMTQxM30.pY9k3j58ovdG86Gz5JimJZ-lx3JoSXOZSC89CfU2cdQ"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/loggedIn"
+			},
+			"response": []
+		},
+		{
+			"name": "New Manager Register",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJzc2NoYW50b25lQGdtYWlsLmNvbSIsImlhdCI6MTcyNTQ0NDgxNywiZXhwIjoxNzI1NTMxMjE3fQ.goIEGJUFylyPncCZJv0YDYOhMbN1--8Ybtt4AKBhpSk"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Manager\",\r\n    \"lastName\": \"One\",\r\n    \"password\": \"secret\",\r\n    \"email\": \"managerone1@gmail.com\",\r\n    \"roles\": [\"ROLE_MANAGER\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/signup-manager"
+			},
+			"response": []
+		},
+		{
+			"name": "New Merchant Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Merchant\",\r\n    \"lastName\": \"One\",\r\n    \"password\": \"secret\",\r\n    \"email\": \"merchantone@gmail.com\",\r\n    \"roles\": [\"ROLE_MERCHANT\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/signup-merchant"
+			},
+			"response": []
+		},
+		{
+			"name": "New Vendor Register",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJzc2NoYW50b25lQGdtYWlsLmNvbSIsImlhdCI6MTcyNTQ0NTgzNiwiZXhwIjoxNzI1NTMyMjM2fQ.vsxTiH5gt_T8kmgMqSK0VcCunncVCc3YOzfQyZg6zy8"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Vendor\",\r\n    \"lastName\": \"One\",\r\n    \"password\": \"secret\",\r\n    \"email\": \"vendorone@gmail.com\",\r\n    \"roles\": [\"ROLE_VENDOR\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/signup-vendor"
+			},
+			"response": []
+		},
+		{
+			"name": "Add New Category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Electronics\",\r\n    \"name\": \"Mobiles & TV ttt11\",\r\n    \"description\": \"Most popular in electronics\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/categories"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/categories"
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1 Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/categories/66d4d6f8517a30739a6f60a6"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Category",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Electronics\",\r\n    \"name\": \"Mobiles with TV\",\r\n    \"description\": \"Most popular in electronics\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/categories/66d4d6f8517a30739a6f60a6"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete 1 Category",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/categories/66d4d6f8517a30739a6f60a6"
+			},
+			"response": []
+		},
+		{
+			"name": "Search Categories",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Food\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/categories/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Merchant-GET Managers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJzc2NoYW50b25lQGdtYWlsLmNvbSIsImlhdCI6MTcyNTQ0NTUwOSwiZXhwIjoxNzI1NTMxOTA5fQ.uIYj2WcwTT0sguex-t19cEmdBr7afesUUGf6NcTX8XY"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/merchants/managers"
+			},
+			"response": []
+		},
+		{
+			"name": "Merchant-GET Vendors",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXJzc2NoYW50b25lQGdtYWlsLmNvbSIsImlhdCI6MTcyNTQ0NTgzNiwiZXhwIjoxNzI1NTMyMjM2fQ.vsxTiH5gt_T8kmgMqSK0VcCunncVCc3YOzfQyZg6zy8"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/merchants/vendors"
+			},
+			"response": []
+		},
+		{
+			"name": "Add New Product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYW5hZ2Vyb25lMUBnbWFpbC5jb20iLCJpYXQiOjE3MjU0NTgwMDIsImV4cCI6MTcyNTU0NDQwMn0.lvBVfR8i6dmSsXWvT0ZtK-fPT-rijvgl0TNjyJwkP2w"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Apple 13\",\r\n    \"price\": 23456,\r\n    \"quantity\": 20,\r\n    \"managerId\": 1,\r\n    \"locations\": [\"1\",\"2\"],\r\n    \"vendorId\": \"1\",\r\n    \"currency\": \"USD\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/products"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYW5hZ2Vyb25lMUBnbWFpbC5jb20iLCJpYXQiOjE3MjU0NTgwMDIsImV4cCI6MTcyNTU0NDQwMn0.lvBVfR8i6dmSsXWvT0ZtK-fPT-rijvgl0TNjyJwkP2w"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/products"
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1 Product Detail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYW5hZ2Vyb25lMUBnbWFpbC5jb20iLCJpYXQiOjE3MjU0NTgwMDIsImV4cCI6MTcyNTU0NDQwMn0.lvBVfR8i6dmSsXWvT0ZtK-fPT-rijvgl0TNjyJwkP2w"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/products/66d86666a15e850614493494"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete 1 Product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/products/66d86666a15e850614493494"
+			},
+			"response": []
+		},
+		{
+			"name": "Search product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8080/api/v1/auth/products/search"
+			},
+			"response": []
+		},
+		{
+			"name": "Update a product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\": 8989,\r\n    \"quantity\": 12\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/api/v1/auth/products/66d4d6f8517a30739a6f60a6"
+			},
+			"response": []
+		}
+	]
+}

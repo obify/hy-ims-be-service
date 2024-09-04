@@ -21,4 +21,5 @@ public class ProductDTO {
     private String managerId;
     private List<String> locations;
     private String vendorId;
+    private String currency;
 }
