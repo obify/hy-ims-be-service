@@ -1,6 +1,5 @@
 package com.obify.hy.ims.controller;
 
-import com.obify.hy.ims.dto.CategoryDTO;
 import com.obify.hy.ims.dto.ProductDTO;
 import com.obify.hy.ims.service.impl.ProductServiceImpl;
 import jakarta.validation.Valid;
