@@ -6,9 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.obify.hy.ims.entity.*;
-import com.obify.hy.ims.exception.BusinessException;
-import com.obify.hy.ims.repository.MerchantManagerRepository;
-import com.obify.hy.ims.repository.MerchantVendorRepository;
+import com.obify.hy.ims.service.AuthService;
 import com.obify.hy.ims.service.impl.MerchantServiceImpl;
 import com.obify.hy.ims.util.CommonUtil;
 import jakarta.validation.Valid;
@@ -16,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.obify.hy.ims.dto.LoginRequestDTO;
-import com.obify.hy.ims.dto.SignupRequestDTO;
+import com.obify.hy.ims.dto.UserDTO;
 import com.obify.hy.ims.dto.JwtResponse;
 import com.obify.hy.ims.dto.MessageResponse;
 import com.obify.hy.ims.repository.RoleRepository;
@@ -53,6 +52,9 @@ public class AuthController {
 	@Autowired
 	CommonUtil commonUtil;
 
+	@Autowired
+	private AuthService authService;
+
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
 
@@ -76,7 +78,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signUpRequest) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO signUpRequest) {
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return ResponseEntity
 					.badRequest()
@@ -137,94 +139,39 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
-	@GetMapping("loggedIn")
+	@GetMapping("/loggedIn")
 	public ResponseEntity<?> loggedInUser(){
 		UserDetailsImpl userDetails = commonUtil.loggedInUser();
 		return new ResponseEntity<>(userDetails, HttpStatus.OK);
 	}
 
 	@PostMapping("/signup-merchant")
-	public ResponseEntity<?> registerMerchant(@Valid @RequestBody SignupRequestDTO signUpRequest) {
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already taken!"));
-		}
-		// Create new user's account
-		User user = new User();
-		user.setFirstName(signUpRequest.getFirstName());
-		user.setLastName(signUpRequest.getLastName());
-		user.setEmail(signUpRequest.getEmail());
-		user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
-		Set<Role> roles = new HashSet<>();
-
-		Role userRole = roleRepository.findByName(ERole.ROLE_MERCHANT)
-				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		roles.add(userRole);
-		user.setRoles(roles);
-		userRepository.save(user);
-
-		return ResponseEntity.ok(new MessageResponse("Merchant registered successfully!"));
+	public ResponseEntity<?> registerMerchant(@Valid @RequestBody UserDTO signUpRequest) {
+		String userId = authService.registerUser(signUpRequest);
+		return ResponseEntity.ok(new MessageResponse("Merchant registered successfully! with Id: "+userId));
 	}
 
 	@PostMapping("/signup-manager")
-	public ResponseEntity<?> registerManager(@Valid @RequestBody SignupRequestDTO signUpRequest) {
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already taken!"));
-		}
-		// Create new user's account
-		User user = new User();
-		user.setFirstName(signUpRequest.getFirstName());
-		user.setLastName(signUpRequest.getLastName());
-		user.setEmail(signUpRequest.getEmail());
-		user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
-		Set<Role> roles = new HashSet<>();
-
-		Role userRole = roleRepository.findByName(ERole.ROLE_MANAGER)
-				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		roles.add(userRole);
-		user.setRoles(roles);
-		user = userRepository.save(user);
-
+	@PreAuthorize("hasRole('MERCHANT')")
+	public ResponseEntity<?> registerManager(@Valid @RequestBody UserDTO signUpRequest) {
+		String userId = authService.registerUser(signUpRequest);
 		UserDetailsImpl userDetails = commonUtil.loggedInUser();
 		MerchantManager mm = new MerchantManager();
-		mm.setManagerId(user.getId());
+		mm.setManagerId(userId);
 		mm.setMerchantId(userDetails.getId());
 		mm = merchantService.saveManager(mm);
 		return ResponseEntity.ok(new MessageResponse("Manager registered successfully with Id: "+mm.getId()));
 	}
 
 	@PostMapping("/signup-vendor")
-	public ResponseEntity<?> registerVendor(@Valid @RequestBody SignupRequestDTO signUpRequest) {
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already taken!"));
-		}
-		// Create new user's account
-		User user = new User();
-		user.setFirstName(signUpRequest.getFirstName());
-		user.setLastName(signUpRequest.getLastName());
-		user.setEmail(signUpRequest.getEmail());
-		user.setPassword(encoder.encode(signUpRequest.getPassword()));
-
-		Set<Role> roles = new HashSet<>();
-		Role userRole = roleRepository.findByName(ERole.ROLE_VENDOR)
-				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		roles.add(userRole);
-		user.setRoles(roles);
-		user = userRepository.save(user);
-
+	@PreAuthorize("hasRole('MERCHANT')")
+	public ResponseEntity<?> registerVendor(@Valid @RequestBody UserDTO signUpRequest) {
+		String userId = authService.registerUser(signUpRequest);
 		UserDetailsImpl userDetails = commonUtil.loggedInUser();
 		MerchantVendor mv = new MerchantVendor();
-		mv.setVendorId(user.getId());
+		mv.setVendorId(userId);
 		mv.setMerchantId(userDetails.getId());
 		mv = merchantService.saveVendor(mv);
-
 		return ResponseEntity.ok(new MessageResponse("Vendor registered successfully with Id: "+mv.getId()));
 	}
 
