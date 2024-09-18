@@ -1,11 +1,11 @@
 package com.obify.hy.ims.service.impl;
 
-import com.obify.hy.ims.dto.CategoryDTO;
 import com.obify.hy.ims.dto.ErrorDTO;
 import com.obify.hy.ims.dto.ProductDTO;
-import com.obify.hy.ims.entity.Category;
+import com.obify.hy.ims.entity.Location;
 import com.obify.hy.ims.entity.Product;
 import com.obify.hy.ims.exception.BusinessException;
+import com.obify.hy.ims.repository.LocationRepository;
 import com.obify.hy.ims.repository.ProductRepository;
 import com.obify.hy.ims.service.ImsService;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +21,8 @@ public class ProductServiceImpl implements ImsService<ProductDTO, ProductDTO> {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Override
     public ProductDTO add(ProductDTO input) {
@@ -28,6 +30,12 @@ public class ProductServiceImpl implements ImsService<ProductDTO, ProductDTO> {
         BeanUtils.copyProperties(input, product);
         product.setCreatedDateTime(LocalDateTime.now());
         product.setUpdatedDateTime(LocalDateTime.now());
+        List<Location> locations = new ArrayList<>();
+        for(String locId: input.getLocations()) {
+          Location le = locationRepository.findById(locId).get();
+          locations.add(le);
+        }
+        product.setLocations(locations);
         product = productRepository.save(product);
         BeanUtils.copyProperties(product, input);
         return input;

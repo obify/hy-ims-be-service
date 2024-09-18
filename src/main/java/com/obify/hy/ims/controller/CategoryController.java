@@ -49,7 +49,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.delete(id), HttpStatus.OK);
     }
 
-    @GetMapping("/categories/search")
+    @PostMapping("/categories/search")
     public ResponseEntity<List<CategoryDTO>> search(@RequestBody CategoryDTO categoryDTO) {
         return new ResponseEntity<>(categoryService.search(categoryDTO), HttpStatus.OK);
     }

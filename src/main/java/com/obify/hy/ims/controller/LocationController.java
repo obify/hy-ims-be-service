@@ -49,7 +49,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.delete(id), HttpStatus.OK);
     }
 
-    @GetMapping("/locations/search")
+    @PostMapping("/locations/search")
     public ResponseEntity<List<LocationDTO>> search(@RequestBody LocationDTO locationDTO) {
         return new ResponseEntity<>(locationService.search(locationDTO), HttpStatus.OK);
     }
