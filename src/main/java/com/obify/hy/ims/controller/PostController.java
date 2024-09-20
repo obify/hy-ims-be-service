@@ -36,6 +36,11 @@ public class PostController {
        return squareupFeignClient.getAllLocations();
     }
 
+    @GetMapping("/categories")
+    ResponseEntity<CategoryModelWrapper> getAllCategories(){
+        return squareupFeignClient.getAllCategories();
+    }
+
     @GetMapping("/sales")
     ResponseEntity<SalesModelWrapper> getAllSales(){
 
