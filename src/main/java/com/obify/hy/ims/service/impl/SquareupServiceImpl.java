@@ -35,8 +35,8 @@ public class SquareupServiceImpl implements SquareupService {
     private SqProductRepository productRepository;
 
     @Override
-    @Async
-    @Scheduled(cron = "${cron.expression.category}")
+    //@Async
+    //@Scheduled(cron = "${cron.expression.category}")
     public String processCategoryData() {
         log.info(" processCategoryData job started ");
         ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories();
@@ -61,8 +61,8 @@ public class SquareupServiceImpl implements SquareupService {
     }
 
     @Override
-    @Async
-    @Scheduled(cron = "${cron.expression.product}")
+    //@Async
+    //@Scheduled(cron = "${cron.expression.product}")
     public String processProductData() {
         System.out.println("product started");
         ProductRequestModel requestModel = new ProductRequestModel();
@@ -89,8 +89,8 @@ public class SquareupServiceImpl implements SquareupService {
     }
 
     @Override
-    @Async
-    @Scheduled(cron = "${cron.expression.sales}")
+    //@Async
+    //@Scheduled(cron = "${cron.expression.sales}")
     public String processSalesData() {
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();

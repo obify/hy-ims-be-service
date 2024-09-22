@@ -33,7 +33,7 @@ public class SquareupController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping("/sq/refresh/products")
+    @GetMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<String> refreshSales() {
         String msg = squareupService.processSalesData();
