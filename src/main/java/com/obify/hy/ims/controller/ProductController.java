@@ -50,7 +50,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.delete(id), HttpStatus.OK);
     }
 
-    @GetMapping("/products/search")
+    @PostMapping("/products/search")
     @PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<List<ProductDTO>> search(@RequestBody ProductDTO productDTO) {
         return new ResponseEntity<>(productService.search(productDTO), HttpStatus.OK);
