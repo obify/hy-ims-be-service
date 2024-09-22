@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "sqproduct")
+@Document(collection = "sqsale")
 public class SqSale {
 
     private String productName;

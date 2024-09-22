@@ -14,8 +14,8 @@ public interface SquareupFeignClient {
     @GetMapping("/locations")
     ResponseEntity<LocationModelWrapper> getAllLocations();
 
-    @GetMapping("/catalog/search-catalog-items")
-    ResponseEntity<ProductModelWrapper> getAllProducts();
+    @PostMapping("/catalog/search-catalog-items")
+    ResponseEntity<ProductModelWrapper> getAllProducts(@RequestBody ProductRequestModel productRequestModel);
 
     @GetMapping("/catalog/list?types=category")
     ResponseEntity<CategoryModelWrapper> getAllCategories();

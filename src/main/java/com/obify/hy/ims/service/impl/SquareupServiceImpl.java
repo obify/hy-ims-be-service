@@ -64,7 +64,14 @@ public class SquareupServiceImpl implements SquareupService {
     @Scheduled(cron = "${cron.expression.product}")
     public void processProductData() {
         System.out.println("product started");
-        ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts();
+        ProductRequestModel requestModel = new ProductRequestModel();
+        requestModel.setLimit(100);
+        requestModel.setProduct_types(Arrays.asList("REGULAR"));
+        requestModel.setCategory_ids(Arrays.asList("7RTN6W3G7MZRHAHPLUHKM6F7"));
+        requestModel.setSort_order("ASC");
+        requestModel.setEnabled_location_ids(Arrays.asList("LVSTZCJXY793K"));
+
+        ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts(requestModel);
         if(re.getStatusCode().is2xxSuccessful()){
             ProductModelWrapper pmw = re.getBody();
             if(pmw.getItems() != null){
