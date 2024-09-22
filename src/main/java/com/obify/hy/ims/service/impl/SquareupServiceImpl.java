@@ -37,7 +37,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     @Async
     @Scheduled(cron = "${cron.expression.category}")
-    public void processCategoryData() {
+    public String processCategoryData() {
         log.info(" processCategoryData job started ");
         ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories();
         if(re.getStatusCode().is2xxSuccessful()){
@@ -57,12 +57,13 @@ public class SquareupServiceImpl implements SquareupService {
             }
         }
         log.info(" processCategoryData job ended ");
+        return "Success";
     }
 
     @Override
     @Async
     @Scheduled(cron = "${cron.expression.product}")
-    public void processProductData() {
+    public String processProductData() {
         System.out.println("product started");
         ProductRequestModel requestModel = new ProductRequestModel();
         requestModel.setLimit(100);
@@ -84,12 +85,13 @@ public class SquareupServiceImpl implements SquareupService {
             }
         }
         System.out.println("product ended");
+        return "Success";
     }
 
     @Override
     @Async
     @Scheduled(cron = "${cron.expression.sales}")
-    public void processSalesData() {
+    public String processSalesData() {
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();
         sqsf.setStates(List.of("COMPLETED"));
@@ -145,10 +147,22 @@ public class SquareupServiceImpl implements SquareupService {
             }
         }
         System.out.println("sale ended");
+        return "Success";
     }
 
     @Override
-    public void calculateTotalProductSales() {
-
+    public List<SqCategory> getAllCategories() {
+        return sqCategoryRepository.findAll();
     }
+
+    @Override
+    public List<SqProduct> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    public List<SqSale> getAllSales() {
+        return sqSalesRepository.findAll();
+    }
+
 }

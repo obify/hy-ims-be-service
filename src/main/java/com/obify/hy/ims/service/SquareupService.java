@@ -1,9 +1,18 @@
 package com.obify.hy.ims.service;
 
+import com.obify.hy.ims.entity.square.SqCategory;
+import com.obify.hy.ims.entity.square.SqProduct;
+import com.obify.hy.ims.entity.square.SqSale;
+
+import java.util.List;
+
 public interface SquareupService {
 
-    void processCategoryData();
-    void processProductData();
-    void processSalesData();
-    void calculateTotalProductSales();
+    String processCategoryData();
+    String processProductData();
+    String processSalesData();
+
+    List<SqCategory> getAllCategories();
+    List<SqProduct> getAllProducts();
+    List<SqSale> getAllSales();
 }
