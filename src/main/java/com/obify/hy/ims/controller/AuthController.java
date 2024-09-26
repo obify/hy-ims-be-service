@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,10 +57,14 @@ public class AuthController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
-
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
+		Authentication authentication = null;
+		try {
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		}catch (BadCredentialsException ex){
+			List<ErrorDTO> errors = List.of(new ErrorDTO("AUTH_003", "Invalid Credentials"));
+			throw new BusinessException(errors);
+		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
