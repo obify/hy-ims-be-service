@@ -26,15 +26,15 @@ public class User {
   private String id;
 
   @NotBlank
-  @Size(max = 20)
+  @Size(max = 120)
   private String firstName;
 
   @NotBlank
-  @Size(max = 20)
+  @Size(max = 120)
   private String lastName;
 
   @NotBlank
-  @Size(max = 50)
+  @Size(max = 150)
   @Email
   private String email;
 
@@ -42,5 +42,8 @@ public class User {
   @Size(max = 120)
   private String password;
   private Set<Role> roles = new HashSet<>();
-
+  private boolean active;
+  private String locationId;
+  private String squareToken;
+  private String phone;
 }

@@ -31,10 +31,10 @@ public class PostController {
         return jsonPlaceholderFeign.getPostById(postId);
     }
 
-    @GetMapping("/locations")
-    ResponseEntity<LocationModelWrapper> getAllLocations(){
-       return squareupFeignClient.getAllLocations();
-    }
+//    @GetMapping("/locations")
+//    ResponseEntity<LocationModelWrapper> getAllLocations(){
+//       return squareupFeignClient.getAllLocations();
+//    }
 
     @GetMapping("/categories")
     ResponseEntity<CategoryModelWrapper> getAllCategories(){

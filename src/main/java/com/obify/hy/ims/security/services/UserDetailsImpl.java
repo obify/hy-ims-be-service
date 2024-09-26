@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.obify.hy.ims.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +17,14 @@ public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	private String id;
-
 	private String username;
 
 	private String email;
 	private String firstName;
 	private String lastName;
+	private String locationId;
+	private String squareToken;
+	private boolean active;
 
 	@JsonIgnore
 	private String password;
@@ -29,13 +32,16 @@ public class UserDetailsImpl implements UserDetails {
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public UserDetailsImpl(String id, String email, String password, String firstName, String lastName,
-			Collection<? extends GrantedAuthority> authorities) {
+			Collection<? extends GrantedAuthority> authorities, String locationId, String squareToken, boolean active) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.authorities = authorities;
+		this.locationId = locationId;
+		this.squareToken = squareToken;
+		this.active = active;
 	}
 
 	public static UserDetailsImpl build(User user) {
@@ -49,7 +55,10 @@ public class UserDetailsImpl implements UserDetails {
 				user.getPassword(),
 				user.getFirstName(),
 				user.getLastName(),
-				authorities);
+				authorities,
+				user.getLocationId(),
+				user.getSquareToken(),
+				user.isActive());
 	}
 
 	@Override
@@ -119,5 +128,29 @@ public class UserDetailsImpl implements UserDetails {
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+	}
+
+	public String getSquareToken() {
+		return squareToken;
+	}
+
+	public void setSquareToken(String squareToken) {
+		this.squareToken = squareToken;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
