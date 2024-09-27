@@ -8,7 +8,9 @@ import com.obify.hy.ims.entity.square.SqSale;
 import com.obify.hy.ims.repository.square.SqCategoryRepository;
 import com.obify.hy.ims.repository.square.SqProductRepository;
 import com.obify.hy.ims.repository.square.SqSalesRepository;
+import com.obify.hy.ims.security.services.UserDetailsImpl;
 import com.obify.hy.ims.service.SquareupService;
+import com.obify.hy.ims.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +36,13 @@ public class SquareupServiceImpl implements SquareupService {
     @Autowired
     private SqProductRepository productRepository;
 
+
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.category}")
-    public String processCategoryData() {
+    public String processCategoryData(String sqToken) {
         log.info(" processCategoryData job started ");
-        ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories();
+        ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories("Bearer "+sqToken);
         if(re.getStatusCode().is2xxSuccessful()){
             CategoryModelWrapper cmw = re.getBody();
             if(!Objects.isNull(cmw.getObjects())){
@@ -63,7 +66,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.product}")
-    public String processProductData() {
+    public String processProductData(String sqToken) {
         System.out.println("product started");
         ProductRequestModel requestModel = new ProductRequestModel();
         requestModel.setLimit(100);
@@ -72,7 +75,7 @@ public class SquareupServiceImpl implements SquareupService {
         requestModel.setSort_order("ASC");
         requestModel.setEnabled_location_ids(Arrays.asList("LVSTZCJXY793K"));
 
-        ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts(requestModel);
+        ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts("Bearer "+sqToken, requestModel);
         if(re.getStatusCode().is2xxSuccessful()){
             ProductModelWrapper pmw = re.getBody();
             if(pmw.getItems() != null){
@@ -91,7 +94,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.sales}")
-    public String processSalesData() {
+    public String processSalesData(String sqToken) {
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();
         sqsf.setStates(List.of("COMPLETED"));
@@ -117,7 +120,7 @@ public class SquareupServiceImpl implements SquareupService {
         sqm.setReturn_entries(true);
         sqm.setLocation_ids(List.of("LNM38YF22M4V0"));
         sqm.setQuery(sqrm);
-        ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales(sqm);
+        ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales("Bearer "+sqToken ,sqm);
 
         if(re.getStatusCode().is2xxSuccessful()) {
             SalesModelWrapper smw = re.getBody();

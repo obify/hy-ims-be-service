@@ -38,7 +38,7 @@ public class PostController {
 
     @GetMapping("/categories")
     ResponseEntity<CategoryModelWrapper> getAllCategories(){
-        return squareupFeignClient.getAllCategories();
+        return squareupFeignClient.getAllCategories("");
     }
 
     @GetMapping("/sales")
@@ -69,6 +69,6 @@ public class PostController {
         sqm.setLocation_ids(List.of("LNM38YF22M4V0"));
         sqm.setQuery(sqrm);
 
-        return squareupFeignClient.getFilteredSales(sqm);
+        return squareupFeignClient.getFilteredSales("", sqm);
     }
 }

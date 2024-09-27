@@ -25,5 +25,4 @@ public class FiPlannedInventory {
     private List<FiIngredient> ingredients;
     private LocalDateTime startDate;
     //@JsonFormat(pattern="dd/MM/yyyy")
-    private LocalDateTime endDate;
 }

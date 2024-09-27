@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface SquareupService {
 
-    String processCategoryData();
-    String processProductData();
-    String processSalesData();
+    String processCategoryData(String sqToken);
+    String processProductData(String sqToken);
+    String processSalesData(String sqToken);
 
     List<SqCategory> getAllCategories();
     List<SqProduct> getAllProducts();

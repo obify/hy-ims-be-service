@@ -1,5 +1,6 @@
 package com.obify.hy.ims.controller;
 
+import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
 import com.obify.hy.ims.entity.square.SqSale;
@@ -19,24 +20,24 @@ public class SquareupController {
     @Autowired
     private SquareupService squareupService;
 
-    @GetMapping("/sq/refresh/categories")
+    @PostMapping("/sq/refresh/categories")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshCategories() {
-        String msg = squareupService.processCategoryData();
+    public ResponseEntity<String> refreshCategories(@RequestBody RequestLocationDTO locationDTO) {
+        String msg = squareupService.processCategoryData(locationDTO.getToken());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping("/sq/refresh/products")
+    @PostMapping("/sq/refresh/products")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshProducts() {
-        String msg = squareupService.processProductData();
+    public ResponseEntity<String> refreshProducts(@RequestBody RequestLocationDTO locationDTO) {
+        String msg = squareupService.processProductData(locationDTO.getToken());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping("/sq/refresh/sales")
+    @PostMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshSales() {
-        String msg = squareupService.processSalesData();
+    public ResponseEntity<String> refreshSales(@RequestBody RequestLocationDTO locationDTO) {
+        String msg = squareupService.processSalesData(locationDTO.getToken());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 

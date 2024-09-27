@@ -16,11 +16,11 @@ public interface SquareupFeignClient {
     ResponseEntity<SingleLocationModelWrapper> getLocationDetail(@RequestHeader("Authorization") String token, @PathVariable String locationId);
 
     @PostMapping("/catalog/search-catalog-items")
-    ResponseEntity<ProductModelWrapper> getAllProducts(@RequestBody ProductRequestModel productRequestModel);
+    ResponseEntity<ProductModelWrapper> getAllProducts(@RequestHeader("Authorization") String token, @RequestBody ProductRequestModel productRequestModel);
 
     @GetMapping("/catalog/list?types=category")
-    ResponseEntity<CategoryModelWrapper> getAllCategories();
+    ResponseEntity<CategoryModelWrapper> getAllCategories(@RequestHeader("Authorization") String token);
 
     @PostMapping("/orders/search")
-    ResponseEntity<SalesModelWrapper> getFilteredSales(@RequestBody SalesRequestModel model);
+    ResponseEntity<SalesModelWrapper> getFilteredSales(@RequestHeader("Authorization") String token, @RequestBody SalesRequestModel model);
 }
