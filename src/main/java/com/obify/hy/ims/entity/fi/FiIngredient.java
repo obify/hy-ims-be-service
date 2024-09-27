@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FiIngredient {
+    private String ingredientId;
     private String ingredient;
     private Integer quantity;
     private String unit;
+    private Integer remainingQty;
 }

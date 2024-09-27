@@ -3,6 +3,7 @@ package com.obify.hy.ims.service.impl;
 import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.OverviewResponseDTO;
 import com.obify.hy.ims.entity.fi.FiIngredient;
+import com.obify.hy.ims.entity.fi.FiPlannedInventory;
 import com.obify.hy.ims.entity.fi.FiProductIngredient;
 import com.obify.hy.ims.entity.fi.Ingredient;
 import com.obify.hy.ims.entity.square.SqSale;
@@ -55,11 +56,20 @@ public class FiInventoryServiceImpl implements FiInventoryService {
             FiIngredient fiIngredient = null;
             for(Map.Entry<String, Integer> mapOfIngredientQty : qtyMap.entrySet()) {
                 fiIngredient = new FiIngredient();
+                fiIngredient.setIngredientId(mapOfIngredientQty.getKey());
                 fiIngredient.setQuantity(mapOfIngredientQty.getValue());
                 Optional<Ingredient> optIn = ingredientRepository.findById(mapOfIngredientQty.getKey());
                 if(optIn.isPresent()){
                     fiIngredient.setIngredient(optIn.get().getName());
                     fiIngredient.setUnit(optIn.get().getUnitOfMeasurement());
+                }
+                List<FiPlannedInventory> plannedInventories = plannedInventoryRepository.findAll();
+                for(FiPlannedInventory fip: plannedInventories){
+                    for(FiIngredient fig: fip.getIngredients()){
+                        if(fig.getIngredient().equals(mapOfIngredientQty.getKey())){
+                            fiIngredient.setRemainingQty(fig.getQuantity()-fiIngredient.getQuantity());
+                        }
+                    }
                 }
                 ingredientList.add(fiIngredient);
             }

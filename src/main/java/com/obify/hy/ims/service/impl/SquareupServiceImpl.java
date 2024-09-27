@@ -4,9 +4,11 @@ import com.obify.hy.ims.client.SquareupFeignClient;
 import com.obify.hy.ims.client.model.*;
 import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.OverviewResponseDTO;
+import com.obify.hy.ims.entity.User;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
 import com.obify.hy.ims.entity.square.SqSale;
+import com.obify.hy.ims.repository.UserRepository;
 import com.obify.hy.ims.repository.square.SqCategoryRepository;
 import com.obify.hy.ims.repository.square.SqProductRepository;
 import com.obify.hy.ims.repository.square.SqSalesRepository;
@@ -37,7 +39,8 @@ public class SquareupServiceImpl implements SquareupService {
     private SqSalesRepository sqSalesRepository;
     @Autowired
     private SqProductRepository productRepository;
-
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     //@Async
@@ -69,13 +72,14 @@ public class SquareupServiceImpl implements SquareupService {
     //@Async
     //@Scheduled(cron = "${cron.expression.product}")
     public String processProductData(String sqToken, String merchantId) {
+        User user = userRepository.findById(merchantId).get();
         System.out.println("product started");
         ProductRequestModel requestModel = new ProductRequestModel();
         requestModel.setLimit(100);
         requestModel.setProduct_types(Arrays.asList("REGULAR"));
         requestModel.setCategory_ids(Arrays.asList("7RTN6W3G7MZRHAHPLUHKM6F7"));
         requestModel.setSort_order("ASC");
-        requestModel.setEnabled_location_ids(Arrays.asList("LVSTZCJXY793K"));
+        requestModel.setEnabled_location_ids(Arrays.asList(user.getLocationId()));
 
         ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts("Bearer "+sqToken, requestModel);
         if(re.getStatusCode().is2xxSuccessful()){
@@ -98,6 +102,7 @@ public class SquareupServiceImpl implements SquareupService {
     //@Async
     //@Scheduled(cron = "${cron.expression.sales}")
     public String processSalesData(String sqToken, String merchantId) {
+        User user = userRepository.findById(merchantId).get();
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();
         sqsf.setStates(List.of("COMPLETED"));
@@ -121,7 +126,7 @@ public class SquareupServiceImpl implements SquareupService {
 
         SalesRequestModel sqm = new SalesRequestModel();
         sqm.setReturn_entries(true);
-        sqm.setLocation_ids(List.of("LNM38YF22M4V0"));
+        sqm.setLocation_ids(List.of(user.getLocationId()));
         sqm.setQuery(sqrm);
         ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales("Bearer "+sqToken ,sqm);
 
