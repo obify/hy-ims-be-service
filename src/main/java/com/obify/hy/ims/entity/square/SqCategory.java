@@ -14,5 +14,5 @@ public class SqCategory {
     @Id
     private String id;
     private String name;
-    private String locationId;
+    private String merchantId;
 }

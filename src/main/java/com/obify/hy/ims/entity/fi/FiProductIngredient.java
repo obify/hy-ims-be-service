@@ -17,5 +17,6 @@ public class FiProductIngredient {
     private String id;
     private String productId;
     private String productName;
+    private String merchantId;
     private List<FiIngredient> ingredients;
 }

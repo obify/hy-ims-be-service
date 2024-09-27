@@ -18,5 +18,5 @@ public class SqLocation {
     private String id;
     private String name;
     private AddressModel address;
-    private String userId;
+    private String merchantId;
 }

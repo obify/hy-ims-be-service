@@ -23,21 +23,21 @@ public class SquareupController {
     @PostMapping("/sq/refresh/categories")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<String> refreshCategories(@RequestBody RequestLocationDTO locationDTO) {
-        String msg = squareupService.processCategoryData(locationDTO.getToken());
+        String msg = squareupService.processCategoryData(locationDTO.getToken(), locationDTO.getMerchantId());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
     @PostMapping("/sq/refresh/products")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<String> refreshProducts(@RequestBody RequestLocationDTO locationDTO) {
-        String msg = squareupService.processProductData(locationDTO.getToken());
+        String msg = squareupService.processProductData(locationDTO.getToken(), locationDTO.getMerchantId());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
     @PostMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<String> refreshSales(@RequestBody RequestLocationDTO locationDTO) {
-        String msg = squareupService.processSalesData(locationDTO.getToken());
+        String msg = squareupService.processSalesData(locationDTO.getToken(), locationDTO.getMerchantId());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 

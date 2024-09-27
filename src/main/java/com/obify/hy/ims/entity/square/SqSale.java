@@ -16,4 +16,5 @@ public class SqSale {
     private String id;
     private String productName;
     private Integer productCountSold;
+    private String merchantId;
 }

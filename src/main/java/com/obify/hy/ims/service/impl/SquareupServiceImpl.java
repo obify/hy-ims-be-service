@@ -2,6 +2,8 @@ package com.obify.hy.ims.service.impl;
 
 import com.obify.hy.ims.client.SquareupFeignClient;
 import com.obify.hy.ims.client.model.*;
+import com.obify.hy.ims.dto.square.OverviewRequestDTO;
+import com.obify.hy.ims.dto.square.OverviewResponseDTO;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
 import com.obify.hy.ims.entity.square.SqSale;
@@ -40,7 +42,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.category}")
-    public String processCategoryData(String sqToken) {
+    public String processCategoryData(String sqToken, String merchantId) {
         log.info(" processCategoryData job started ");
         ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories("Bearer "+sqToken);
         if(re.getStatusCode().is2xxSuccessful()){
@@ -51,8 +53,8 @@ public class SquareupServiceImpl implements SquareupService {
                             Optional<SqCategory> optSqCategory = sqCategoryRepository.findAllByNameContaining(categoryModel.getCategory_data().getName());
                             if(optSqCategory.isEmpty()){
                                 SqCategory sqCategory = new SqCategory();
-                                sqCategory.setLocationId("LVSTZCJXY793K");
                                 sqCategory.setId(categoryModel.getId());
+                                sqCategory.setMerchantId(merchantId);
                                 sqCategory.setName(categoryModel.getCategory_data().getName());
                                 sqCategoryRepository.save(sqCategory);
                             }
@@ -66,7 +68,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.product}")
-    public String processProductData(String sqToken) {
+    public String processProductData(String sqToken, String merchantId) {
         System.out.println("product started");
         ProductRequestModel requestModel = new ProductRequestModel();
         requestModel.setLimit(100);
@@ -82,6 +84,7 @@ public class SquareupServiceImpl implements SquareupService {
                 pmw.getItems().forEach((item)->{
                     SqProduct product = new SqProduct();
                     product.setId(item.getId());
+                    product.setMerchantId(merchantId);
                     product.setName(item.getItem_data().getName());
                     productRepository.save(product);
                 });
@@ -94,7 +97,7 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.sales}")
-    public String processSalesData(String sqToken) {
+    public String processSalesData(String sqToken, String merchantId) {
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();
         sqsf.setStates(List.of("COMPLETED"));
@@ -145,12 +148,18 @@ public class SquareupServiceImpl implements SquareupService {
                     SqSale sqSale = new SqSale();
                     sqSale.setProductName(mapData.getKey());
                     sqSale.setProductCountSold(mapData.getValue());
+                    sqSale.setMerchantId(merchantId);
                     sqSalesRepository.save(sqSale);
                 }
             }
         }
         System.out.println("sale ended");
         return "Success";
+    }
+
+    @Override
+    public List<OverviewResponseDTO> inventoryOverview(OverviewRequestDTO requestDTO) {
+        return List.of();
     }
 
     @Override

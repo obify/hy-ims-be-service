@@ -4,6 +4,8 @@ import com.obify.hy.ims.client.SquareupFeignClient;
 import com.obify.hy.ims.client.model.LocationModel;
 import com.obify.hy.ims.client.model.LocationModelWrapper;
 import com.obify.hy.ims.client.model.SingleLocationModelWrapper;
+import com.obify.hy.ims.dto.square.OverviewRequestDTO;
+import com.obify.hy.ims.dto.square.OverviewResponseDTO;
 import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.User;
 import com.obify.hy.ims.entity.fi.FiPlannedInventory;
@@ -13,6 +15,7 @@ import com.obify.hy.ims.repository.UserRepository;
 import com.obify.hy.ims.repository.fi.IngredientRepository;
 import com.obify.hy.ims.repository.fi.PlannedInventoryRepository;
 import com.obify.hy.ims.repository.fi.ProductIngredientRepository;
+import com.obify.hy.ims.service.impl.FiInventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +39,8 @@ public class FiInventoryController {
     private SquareupFeignClient squareupFeignClient;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FiInventoryServiceImpl fiInventoryService;
 
     @PutMapping("/fi/locations/{locationId}/users/{email}")
     public ResponseEntity<String> updateLocation(@PathVariable String locationId, @PathVariable String email){
@@ -66,9 +71,15 @@ public class FiInventoryController {
         return new ResponseEntity<>(ingredient, HttpStatus.CREATED);
     }
 
-    @GetMapping("/fi/ingredients")
-    public ResponseEntity<List<Ingredient>> getAllIngredient(){
-        List<Ingredient> ingredientList = ingredientRepository.findAll();
+    @GetMapping("/fi/ingredients-detail/{ingredientId}")
+    public ResponseEntity<Ingredient> getIngredient(@PathVariable String ingredientId){
+        Ingredient ingredient = ingredientRepository.findById(ingredientId).get();
+        return new ResponseEntity<>(ingredient, HttpStatus.OK);
+    }
+
+    @GetMapping("/fi/ingredients/{merchantId}")
+    public ResponseEntity<List<Ingredient>> getAllIngredient(@PathVariable String merchantId){
+        List<Ingredient> ingredientList = ingredientRepository.findAllByMerchantId(merchantId);
         return new ResponseEntity<>(ingredientList, HttpStatus.OK);
     }
     @PostMapping("/fi/ingredients/save")
@@ -85,5 +96,10 @@ public class FiInventoryController {
     public ResponseEntity<String> saveProductInventory(@RequestBody FiPlannedInventory fiPlannedInventory){
         plannedInventoryRepository.save(fiPlannedInventory);
         return new ResponseEntity<>("success", HttpStatus.CREATED);
+    }
+    @PostMapping("/fi/inventory/overview")
+    public ResponseEntity<OverviewResponseDTO> inventoryOverview(@RequestBody OverviewRequestDTO requestDTO){
+        OverviewResponseDTO dto = fiInventoryService.inventoryOverview(requestDTO);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }
