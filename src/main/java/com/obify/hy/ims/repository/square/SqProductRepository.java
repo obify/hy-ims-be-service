@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface SqProductRepository extends MongoRepository<SqProduct, String> {
     Optional<SqProduct> findAllByNameContaining(String name);
+    void deleteAllByMerchantId(String merchantId);
 }

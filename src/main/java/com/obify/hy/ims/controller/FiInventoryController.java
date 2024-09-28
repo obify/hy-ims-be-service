@@ -15,6 +15,7 @@ import com.obify.hy.ims.repository.UserRepository;
 import com.obify.hy.ims.repository.fi.IngredientRepository;
 import com.obify.hy.ims.repository.fi.PlannedInventoryRepository;
 import com.obify.hy.ims.repository.fi.ProductIngredientRepository;
+import com.obify.hy.ims.service.SquareupService;
 import com.obify.hy.ims.service.impl.FiInventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

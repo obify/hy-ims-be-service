@@ -1,5 +1,6 @@
 package com.obify.hy.ims.controller;
 
+import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
@@ -36,8 +37,8 @@ public class SquareupController {
 
     @PostMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshSales(@RequestBody RequestLocationDTO locationDTO) {
-        String msg = squareupService.processSalesData(locationDTO.getToken(), locationDTO.getMerchantId());
+    public ResponseEntity<String> refreshSales(@RequestBody OverviewRequestDTO requestDTO) {
+        String msg = squareupService.processSalesData(requestDTO);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 

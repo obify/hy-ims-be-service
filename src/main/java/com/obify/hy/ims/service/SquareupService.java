@@ -12,7 +12,7 @@ public interface SquareupService {
 
     String processCategoryData(String sqToken, String merchantId);
     String processProductData(String sqToken, String merchantId);
-    String processSalesData(String sqToken, String merchantId);
+    String processSalesData(OverviewRequestDTO requestDTO);
 
     List<OverviewResponseDTO> inventoryOverview(OverviewRequestDTO requestDTO);
     List<SqCategory> getAllCategories();

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SqSalesRepository extends MongoRepository<SqSale, String> {
     List<SqSale> findAllByMerchantId(String merchantId);
+    List<SqSale> deleteAllByMerchantId(String merchantId);
 }

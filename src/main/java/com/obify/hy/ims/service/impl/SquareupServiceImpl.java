@@ -49,6 +49,7 @@ public class SquareupServiceImpl implements SquareupService {
         log.info(" processCategoryData job started ");
         ResponseEntity<CategoryModelWrapper> re = squareupFeignClient.getAllCategories("Bearer "+sqToken);
         if(re.getStatusCode().is2xxSuccessful()){
+            sqCategoryRepository.deleteAllByMerchantId(merchantId);
             CategoryModelWrapper cmw = re.getBody();
             if(!Objects.isNull(cmw.getObjects())){
                 cmw.getObjects().
@@ -77,12 +78,19 @@ public class SquareupServiceImpl implements SquareupService {
         ProductRequestModel requestModel = new ProductRequestModel();
         requestModel.setLimit(100);
         requestModel.setProduct_types(Arrays.asList("REGULAR"));
-        requestModel.setCategory_ids(Arrays.asList("7RTN6W3G7MZRHAHPLUHKM6F7"));
+        List<SqCategory> categories = sqCategoryRepository.findAllByMerchantId(merchantId);
+        List<String> catIds = new ArrayList<>();
+        for(SqCategory category: categories){
+            catIds.add(category.getId());
+        }
+        //requestModel.setCategory_ids(Arrays.asList("7RTN6W3G7MZRHAHPLUHKM6F7"));
+        requestModel.setCategory_ids(catIds);
         requestModel.setSort_order("ASC");
         requestModel.setEnabled_location_ids(Arrays.asList(user.getLocationId()));
 
         ResponseEntity<ProductModelWrapper> re = squareupFeignClient.getAllProducts("Bearer "+sqToken, requestModel);
         if(re.getStatusCode().is2xxSuccessful()){
+            productRepository.deleteAllByMerchantId(merchantId);
             ProductModelWrapper pmw = re.getBody();
             if(pmw.getItems() != null){
                 pmw.getItems().forEach((item)->{
@@ -90,6 +98,17 @@ public class SquareupServiceImpl implements SquareupService {
                     product.setId(item.getId());
                     product.setMerchantId(merchantId);
                     product.setName(item.getItem_data().getName());
+                    try{
+                        if(null != item.getItem_data() &&
+                                null != item.getItem_data().getEcom_image_uris() &&
+                                !item.getItem_data().getEcom_image_uris().isEmpty()){
+                            product.setImageUrl(item.getItem_data().getEcom_image_uris().get(0));
+                        }else{
+                            product.setImageUrl("https://images.unsplash.com/photo-1610513320995-1ad4bbf25e55?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bm90JTIwYXZhaWxhYmxlfGVufDB8fDB8fHww");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     productRepository.save(product);
                 });
             }
@@ -101,8 +120,8 @@ public class SquareupServiceImpl implements SquareupService {
     @Override
     //@Async
     //@Scheduled(cron = "${cron.expression.sales}")
-    public String processSalesData(String sqToken, String merchantId) {
-        User user = userRepository.findById(merchantId).get();
+    public String processSalesData(OverviewRequestDTO requestDTO) {
+        User user = userRepository.findById(requestDTO.getMerchantId()).get();
         System.out.println("sale started");
         SalesQueryStateFilter sqsf = new SalesQueryStateFilter();
         sqsf.setStates(List.of("COMPLETED"));
@@ -113,13 +132,14 @@ public class SquareupServiceImpl implements SquareupService {
         sam.setStart_at(LocalDateTime.now().toString());
 
         ClosedAtFilter caf = new ClosedAtFilter();
-        //caf.setStart_at(sam);
+        caf.setStart_at(requestDTO.getStartAt());
+        caf.setEnd_at(requestDTO.getEndAt());
 
         SalesDateTimeFilter sdtf = new SalesDateTimeFilter();
-        //sdtf.setClosed_at(caf);
+        sdtf.setClosed_at(caf);
 
         SalesQueryFilterModel sqfm = new SalesQueryFilterModel();
-        //sqfm.setDate_time_filter(sdtf);
+        sqfm.setDate_time_filter(sdtf);
         sqfm.setState_filter(sqsf);
 
         sqrm.setFilter(sqfm);
@@ -128,7 +148,7 @@ public class SquareupServiceImpl implements SquareupService {
         sqm.setReturn_entries(true);
         sqm.setLocation_ids(List.of(user.getLocationId()));
         sqm.setQuery(sqrm);
-        ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales("Bearer "+sqToken ,sqm);
+        ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales("Bearer "+requestDTO.getToken() ,sqm);
 
         if(re.getStatusCode().is2xxSuccessful()) {
             SalesModelWrapper smw = re.getBody();
@@ -153,7 +173,7 @@ public class SquareupServiceImpl implements SquareupService {
                     SqSale sqSale = new SqSale();
                     sqSale.setProductName(mapData.getKey());
                     sqSale.setProductCountSold(mapData.getValue());
-                    sqSale.setMerchantId(merchantId);
+                    sqSale.setMerchantId(requestDTO.getMerchantId());
                     sqSalesRepository.save(sqSale);
                 }
             }

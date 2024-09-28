@@ -23,6 +23,7 @@ public class FiPlannedInventory {
     @Id
     private String id;
     private List<FiIngredient> ingredients;
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
+    private String merchantId;
     //@JsonFormat(pattern="dd/MM/yyyy")
 }

@@ -17,4 +17,5 @@ public class SqProduct {
     private String id;
     private String name;
     private String merchantId;
+    private String imageUrl;
 }

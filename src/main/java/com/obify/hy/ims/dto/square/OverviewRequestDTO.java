@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,8 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OverviewRequestDTO {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
     private String merchantId;
+    private String token;
 }
