@@ -129,11 +129,15 @@ public class SquareupServiceImpl implements SquareupService {
         SalesQueryRequestModel sqrm = new SalesQueryRequestModel();
 
         StartAtModel sam = new StartAtModel();
-        sam.setStart_at(LocalDateTime.now().toString());
+        sam.setStart_at(requestDTO.getStartAt());
 
         ClosedAtFilter caf = new ClosedAtFilter();
-        caf.setStart_at(requestDTO.getStartAt());
-        caf.setEnd_at(requestDTO.getEndAt());
+        caf.setStart_at(LocalDateTime.parse(requestDTO.getStartAt()));
+        if(requestDTO.getEndAt() == null){
+            caf.setEnd_at(LocalDateTime.now());
+        }else{
+            caf.setEnd_at(LocalDateTime.parse(requestDTO.getEndAt()));
+        }
 
         SalesDateTimeFilter sdtf = new SalesDateTimeFilter();
         sdtf.setClosed_at(caf);
@@ -171,6 +175,7 @@ public class SquareupServiceImpl implements SquareupService {
             if(!salesCountMap.isEmpty()){
                 for(Map.Entry<String, Integer> mapData: salesCountMap.entrySet()){
                     SqSale sqSale = new SqSale();
+                    sqSale.setUpdatedAt(LocalDateTime.now());
                     sqSale.setProductName(mapData.getKey());
                     sqSale.setProductCountSold(mapData.getValue());
                     sqSale.setMerchantId(requestDTO.getMerchantId());

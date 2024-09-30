@@ -20,4 +20,5 @@ public class Ingredient {
     private String name;
     private String merchantId;
     private String unitOfMeasurement;
+    private Float lowQuantity;
 }

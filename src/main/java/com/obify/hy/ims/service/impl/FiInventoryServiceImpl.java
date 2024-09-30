@@ -1,7 +1,5 @@
 package com.obify.hy.ims.service.impl;
 
-import com.obify.hy.ims.client.SquareupFeignClient;
-import com.obify.hy.ims.client.model.SalesModelWrapper;
 import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.OverviewResponseDTO;
 import com.obify.hy.ims.entity.fi.FiIngredient;
@@ -20,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -43,7 +42,7 @@ public class FiInventoryServiceImpl implements FiInventoryService {
         sqSalesRepository.deleteAllByMerchantId(requestDTO.getMerchantId());
         squareupService.processSalesData(requestDTO);
         List<SqSale> sales = sqSalesRepository.findAllByMerchantId(requestDTO.getMerchantId());
-        Map<String, Integer> qtyMap = new HashMap<>();
+        Map<String, Float> qtyMap = new HashMap<>();
         try {
             for (SqSale sale : sales) {
                 Optional<FiProductIngredient> optFiProdIngredient = productIngredientRepository.findByProductName(sale.getProductName());
@@ -52,7 +51,7 @@ public class FiInventoryServiceImpl implements FiInventoryService {
                         if (qtyMap.get(fii.getIngredient()) == null) {
                             qtyMap.put(fii.getIngredient(), fii.getQuantity() * sale.getProductCountSold());
                         } else {
-                            Integer qty = qtyMap.get(fii.getIngredient());
+                            Float qty = qtyMap.get(fii.getIngredient());
                             qtyMap.put(fii.getIngredient(), qty + (fii.getQuantity() * sale.getProductCountSold()));
                         }
                     }
@@ -65,26 +64,13 @@ public class FiInventoryServiceImpl implements FiInventoryService {
         if(!qtyMap.isEmpty()) {
             dto = new OverviewResponseDTO();
             List<FiIngredient> ingredientList = new ArrayList<>();
-            FiIngredient fiIngredient = null;
-            for(Map.Entry<String, Integer> mapOfIngredientQty : qtyMap.entrySet()) {
-                fiIngredient = new FiIngredient();
-                fiIngredient.setIngredientId(mapOfIngredientQty.getKey());
-                fiIngredient.setQuantity(mapOfIngredientQty.getValue());
-                Optional<Ingredient> optIn = ingredientRepository.findById(mapOfIngredientQty.getKey());
-                if(optIn.isPresent()){
-                    fiIngredient.setIngredient(optIn.get().getName());
-                    fiIngredient.setUnit(optIn.get().getUnitOfMeasurement());
-                }
-                //List<FiPlannedInventory> plannedInventories = plannedInventoryRepository.findAllByMerchantIdAndStartDateTimeBetween(requestDTO.getMerchantId(), requestDTO.getStartAt(), requestDTO.getEndAt());
-                List<FiPlannedInventory> plannedInventories = plannedInventoryRepository.findAllByMerchantId(requestDTO.getMerchantId());
-                for(FiPlannedInventory fip: plannedInventories){
-                    for(FiIngredient fig: fip.getIngredients()){
-                        if(fig.getIngredient().equals(mapOfIngredientQty.getKey())){
-                            fiIngredient.setRemainingQty(fig.getQuantity()-fiIngredient.getQuantity());
-                        }
-                    }
-                }
-                ingredientList.add(fiIngredient);
+            FiIngredient fii = null;
+            for(Map.Entry<String, Float> mapOfIngredientQty : qtyMap.entrySet()) {
+                fii = plannedInventoryRepository.findByIngredientId(mapOfIngredientQty.getKey());
+                fii.setRemainingQty(fii.getRemainingQty() - mapOfIngredientQty.getValue());
+                fii.setSalesToDtTime(LocalDateTime.parse(requestDTO.getEndAt()));
+                fii = plannedInventoryRepository.save(fii);
+                ingredientList.add(fii);
             }
             dto.setIngredient(ingredientList);
         }

@@ -1,5 +1,6 @@
 package com.obify.hy.ims.dto.square;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OverviewRequestDTO {
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
+    private String startAt;
+    private String endAt;
     private String merchantId;
     private String token;
 }

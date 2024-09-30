@@ -5,6 +5,7 @@ import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
 import com.obify.hy.ims.entity.square.SqSale;
+import com.obify.hy.ims.repository.square.SqSalesRepository;
 import com.obify.hy.ims.service.SquareupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ public class SquareupController {
 
     @Autowired
     private SquareupService squareupService;
+    @Autowired
+    private SqSalesRepository sqSalesRepository;
 
     @PostMapping("/sq/refresh/categories")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
@@ -38,6 +41,7 @@ public class SquareupController {
     @PostMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
     public ResponseEntity<String> refreshSales(@RequestBody OverviewRequestDTO requestDTO) {
+        sqSalesRepository.deleteAllByMerchantId(requestDTO.getMerchantId());
         String msg = squareupService.processSalesData(requestDTO);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }

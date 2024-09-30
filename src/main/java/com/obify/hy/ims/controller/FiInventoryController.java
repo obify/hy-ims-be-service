@@ -8,13 +8,16 @@ import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.OverviewResponseDTO;
 import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.User;
+import com.obify.hy.ims.entity.fi.FiIngredient;
 import com.obify.hy.ims.entity.fi.FiPlannedInventory;
 import com.obify.hy.ims.entity.fi.FiProductIngredient;
 import com.obify.hy.ims.entity.fi.Ingredient;
+import com.obify.hy.ims.entity.square.SqSale;
 import com.obify.hy.ims.repository.UserRepository;
 import com.obify.hy.ims.repository.fi.IngredientRepository;
 import com.obify.hy.ims.repository.fi.PlannedInventoryRepository;
 import com.obify.hy.ims.repository.fi.ProductIngredientRepository;
+import com.obify.hy.ims.repository.square.SqSalesRepository;
 import com.obify.hy.ims.service.SquareupService;
 import com.obify.hy.ims.service.impl.FiInventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +46,8 @@ public class FiInventoryController {
     private UserRepository userRepository;
     @Autowired
     private FiInventoryServiceImpl fiInventoryService;
+    @Autowired
+    private SqSalesRepository sqSalesRepository;
 
     @PutMapping("/fi/locations/{locationId}/users/{email}")
     public ResponseEntity<String> updateLocation(@PathVariable String locationId, @PathVariable String email){
@@ -85,21 +91,46 @@ public class FiInventoryController {
     }
     @PostMapping("/fi/ingredients/save")
     public ResponseEntity<String> saveProductIngredients(@RequestBody FiProductIngredient ingredient){
+        ingredient.setCreatedAt(LocalDateTime.now());
         productIngredientRepository.save(ingredient);
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
-    @GetMapping("/fi/inventory")
-    public ResponseEntity<List<FiPlannedInventory>> getAllInventory(){
-        List<FiPlannedInventory> inventories = plannedInventoryRepository.findAll();
-        return new ResponseEntity<>(inventories, HttpStatus.OK);
+
+    @GetMapping("/fi/available-inventory/{ingredientId}")
+    public ResponseEntity<FiIngredient> getAvailableInventory(@PathVariable String ingredientId){
+        FiIngredient availableIngredient = plannedInventoryRepository.findByIngredientId(ingredientId);
+        return new ResponseEntity<>(availableIngredient, HttpStatus.OK);
     }
     @PostMapping("/fi/inventory/save")
-    public ResponseEntity<String> saveProductInventory(@RequestBody FiPlannedInventory fiPlannedInventory){
-        plannedInventoryRepository.save(fiPlannedInventory);
+    public ResponseEntity<String> saveProductInventory(@RequestBody FiIngredient fiPlannedInventory){
+        FiIngredient fiIngredient =  plannedInventoryRepository.findByIngredientId(fiPlannedInventory.getIngredientId());
+        if(fiIngredient != null){
+            fiIngredient.setRemainingQty(fiIngredient.getRemainingQty() + fiPlannedInventory.getQuantity());
+            fiIngredient.setUpdatedAt(LocalDateTime.now());
+            plannedInventoryRepository.save(fiIngredient);
+        }else{
+            fiPlannedInventory.setRemainingQty(fiPlannedInventory.getQuantity());
+            fiPlannedInventory.setQuantity(fiPlannedInventory.getQuantity());
+            fiPlannedInventory.setCreatedAt(LocalDateTime.now());
+            fiPlannedInventory.setUpdatedAt(LocalDateTime.now());
+            plannedInventoryRepository.save(fiPlannedInventory);
+        }
+
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
     @PostMapping("/fi/inventory/overview")
     public ResponseEntity<OverviewResponseDTO> inventoryOverview(@RequestBody OverviewRequestDTO requestDTO){
+//        LocalDateTime sdt = LocalDateTime.parse(requestDTO.getStartAt());
+//        LocalDateTime edt = LocalDateTime.parse(requestDTO.getEndAt());
+//        List<SqSale> sales = sqSalesRepository.findByUpdatedAtBetween(sdt, edt);
+        FiIngredient firstFi = plannedInventoryRepository.findFirstByMerchantId(requestDTO.getMerchantId());
+        requestDTO.setStartAt(firstFi.getUpdatedAt().toString());
+        if(firstFi.getSalesToDtTime() != null){
+            requestDTO.setEndAt(firstFi.getSalesToDtTime().toString());
+        }else{
+            requestDTO.setEndAt(LocalDateTime.now().toString());
+        }
+
         OverviewResponseDTO dto = fiInventoryService.inventoryOverview(requestDTO);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
