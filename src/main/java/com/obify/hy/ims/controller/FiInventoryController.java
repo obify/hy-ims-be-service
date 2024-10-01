@@ -123,13 +123,13 @@ public class FiInventoryController {
 //        LocalDateTime sdt = LocalDateTime.parse(requestDTO.getStartAt());
 //        LocalDateTime edt = LocalDateTime.parse(requestDTO.getEndAt());
 //        List<SqSale> sales = sqSalesRepository.findByUpdatedAtBetween(sdt, edt);
-        FiIngredient firstFi = plannedInventoryRepository.findFirstByMerchantId(requestDTO.getMerchantId());
-        requestDTO.setStartAt(firstFi.getUpdatedAt().toString());
-        if(firstFi.getSalesToDtTime() != null){
-            requestDTO.setEndAt(firstFi.getSalesToDtTime().toString());
-        }else{
-            requestDTO.setEndAt(LocalDateTime.now().toString());
-        }
+        //FiIngredient firstFi = plannedInventoryRepository.findFirstByMerchantId(requestDTO.getMerchantId());
+//        requestDTO.setStartAt(firstFi.getUpdatedAt().toString());
+//        if(firstFi.getSalesToDtTime() != null){
+//            requestDTO.setEndAt(firstFi.getSalesToDtTime().toString());
+//        }else{
+//            requestDTO.setEndAt(LocalDateTime.now().toString());
+//        }
 
         OverviewResponseDTO dto = fiInventoryService.inventoryOverview(requestDTO);
         return new ResponseEntity<>(dto, HttpStatus.OK);

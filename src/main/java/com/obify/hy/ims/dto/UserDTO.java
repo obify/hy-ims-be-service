@@ -26,7 +26,7 @@ public class UserDTO {
     private String locationId;
     private String squareToken;
     private String phone;
-    
+    private String pos;
     @NotBlank
     private String password;
 }

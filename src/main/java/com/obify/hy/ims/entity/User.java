@@ -45,5 +45,6 @@ public class User {
   private boolean active;
   private String locationId;
   private String squareToken;
+  private String pos;
   private String phone;
 }

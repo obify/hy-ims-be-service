@@ -6,11 +6,9 @@ import com.obify.hy.ims.entity.fi.FiIngredient;
 import com.obify.hy.ims.entity.fi.FiPlannedInventory;
 import com.obify.hy.ims.entity.fi.FiProductIngredient;
 import com.obify.hy.ims.entity.fi.Ingredient;
+import com.obify.hy.ims.entity.square.RemainingInventory;
 import com.obify.hy.ims.entity.square.SqSale;
-import com.obify.hy.ims.repository.fi.FiIngredientRepository;
-import com.obify.hy.ims.repository.fi.IngredientRepository;
-import com.obify.hy.ims.repository.fi.PlannedInventoryRepository;
-import com.obify.hy.ims.repository.fi.ProductIngredientRepository;
+import com.obify.hy.ims.repository.fi.*;
 import com.obify.hy.ims.repository.square.SqSalesRepository;
 import com.obify.hy.ims.service.FiInventoryService;
 import com.obify.hy.ims.service.SquareupService;
@@ -36,6 +34,8 @@ public class FiInventoryServiceImpl implements FiInventoryService {
     private SqSalesRepository sqSalesRepository;
     @Autowired
     private FiIngredientRepository fiIngredientRepository;
+    @Autowired
+    private RemainingInventoryRepository remainingInventoryRepository;
 
     @Override
     public OverviewResponseDTO inventoryOverview(OverviewRequestDTO requestDTO) {
@@ -63,16 +63,23 @@ public class FiInventoryServiceImpl implements FiInventoryService {
         OverviewResponseDTO dto = null;
         if(!qtyMap.isEmpty()) {
             dto = new OverviewResponseDTO();
-            List<FiIngredient> ingredientList = new ArrayList<>();
-            FiIngredient fii = null;
+            List<RemainingInventory> inventories = new ArrayList<>();
+            RemainingInventory fii = null;
             for(Map.Entry<String, Float> mapOfIngredientQty : qtyMap.entrySet()) {
-                fii = plannedInventoryRepository.findByIngredientId(mapOfIngredientQty.getKey());
-                fii.setRemainingQty(fii.getRemainingQty() - mapOfIngredientQty.getValue());
-                fii.setSalesToDtTime(LocalDateTime.parse(requestDTO.getEndAt()));
-                fii = plannedInventoryRepository.save(fii);
-                ingredientList.add(fii);
+                FiIngredient fiidb = plannedInventoryRepository.findByIngredientId(mapOfIngredientQty.getKey());
+                fii = new RemainingInventory();
+                fii.setUsedQty(mapOfIngredientQty.getValue());
+                fii.setIngredientId(fiidb.getIngredientId());
+                fii.setIngredient(fiidb.getIngredient());
+                fii.setRemainingQty(fiidb.getRemainingQty() - fii.getUsedQty());
+                fii.setUnit(fiidb.getUnit());
+                fii.setMerchantId(fiidb.getMerchantId());
+                fii = remainingInventoryRepository.save(fii);
+                inventories.add(fii);
             }
-            dto.setIngredient(ingredientList);
+            dto.setFromDateTime(requestDTO.getStartAt());
+            dto.setToDateTime(requestDTO.getEndAt());
+            dto.setRemainingInventories(inventories);
         }
         return dto;
     }

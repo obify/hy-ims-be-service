@@ -132,11 +132,11 @@ public class SquareupServiceImpl implements SquareupService {
         sam.setStart_at(requestDTO.getStartAt());
 
         ClosedAtFilter caf = new ClosedAtFilter();
-        caf.setStart_at(LocalDateTime.parse(requestDTO.getStartAt()));
+        caf.setStart_at(requestDTO.getStartAt());
         if(requestDTO.getEndAt() == null){
-            caf.setEnd_at(LocalDateTime.now());
+            caf.setEnd_at(LocalDateTime.now().toString());
         }else{
-            caf.setEnd_at(LocalDateTime.parse(requestDTO.getEndAt()));
+            caf.setEnd_at(requestDTO.getEndAt());
         }
 
         SalesDateTimeFilter sdtf = new SalesDateTimeFilter();
@@ -152,7 +152,12 @@ public class SquareupServiceImpl implements SquareupService {
         sqm.setReturn_entries(true);
         sqm.setLocation_ids(List.of(user.getLocationId()));
         sqm.setQuery(sqrm);
-        ResponseEntity<SalesModelWrapper> re = squareupFeignClient.getFilteredSales("Bearer "+requestDTO.getToken() ,sqm);
+        ResponseEntity<SalesModelWrapper> re = null;
+        try {
+            re = squareupFeignClient.getFilteredSales("Bearer "+requestDTO.getToken() ,sqm);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
         if(re.getStatusCode().is2xxSuccessful()) {
             SalesModelWrapper smw = re.getBody();

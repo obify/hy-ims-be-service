@@ -16,9 +16,10 @@ public class JwtResponse {
 	private String email;
 	private String locationId;
 	private String sqToken;
+	private String pos;
 	private List<String> roles;
 
-	public JwtResponse(String accessToken, String id, String firstName, String lastName, String email, List<String> roles, String locationId, String sqToken) {
+	public JwtResponse(String accessToken, String id, String firstName, String lastName, String email, List<String> roles, String locationId, String sqToken, String pos) {
 		this.token = accessToken;
 		this.id = id;
 		this.firstName = firstName;
@@ -27,5 +28,6 @@ public class JwtResponse {
 		this.roles = roles;
 		this.locationId = locationId;
 		this.sqToken = sqToken;
+		this.pos = pos;
 	}
 }

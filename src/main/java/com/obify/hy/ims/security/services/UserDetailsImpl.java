@@ -24,6 +24,7 @@ public class UserDetailsImpl implements UserDetails {
 	private String lastName;
 	private String locationId;
 	private String squareToken;
+	private String pos;
 	private boolean active;
 
 	@JsonIgnore
@@ -32,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public UserDetailsImpl(String id, String email, String password, String firstName, String lastName,
-			Collection<? extends GrantedAuthority> authorities, String locationId, String squareToken, boolean active) {
+			Collection<? extends GrantedAuthority> authorities, String locationId, String squareToken, String pos, boolean active) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -41,6 +42,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.authorities = authorities;
 		this.locationId = locationId;
 		this.squareToken = squareToken;
+		this.pos = pos;
 		this.active = active;
 	}
 
@@ -58,6 +60,7 @@ public class UserDetailsImpl implements UserDetails {
 				authorities,
 				user.getLocationId(),
 				user.getSquareToken(),
+				user.getPos(),
 				user.isActive());
 	}
 
@@ -152,5 +155,13 @@ public class UserDetailsImpl implements UserDetails {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getPos() {
+		return pos;
+	}
+
+	public void setPos(String pos) {
+		this.pos = pos;
 	}
 }

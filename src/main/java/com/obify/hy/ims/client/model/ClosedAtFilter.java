@@ -14,6 +14,6 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ClosedAtFilter {
-    private LocalDateTime start_at;
-    private LocalDateTime end_at;
+    private String start_at;
+    private String end_at;
 }
