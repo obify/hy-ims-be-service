@@ -1,19 +1,24 @@
-package com.obify.hy.ims.client.model;
+package com.obify.hy.ims.entity.fi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "ingredient")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductItemModel {
+public class Ingredient {
+    @Id
+    private String id;
     private String name;
-    private List<String> ecom_image_uris;
+    private String merchantId;
+    private String unitOfMeasurement;
+    private Float lowQuantity;
 }

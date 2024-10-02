@@ -1,21 +1,25 @@
 package com.obify.hy.ims.entity.square;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "sqproduct")
-public class SqProduct {
+@Document(collection = "remaininginventory")
+public class RemainingInventory {
+
     @Id
     private String id;
-    private String name;
+    private String ingredientId;
+    private String ingredient;
+    private Float usedQty;
+    private Float remainingQty;
+    private String unit;
     private String merchantId;
-    private String imageUrl;
 }

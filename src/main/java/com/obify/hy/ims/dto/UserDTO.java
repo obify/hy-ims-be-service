@@ -17,15 +17,16 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
  
     @NotBlank
-    @Size(max = 50)
     @Email
     private String email;
 
     private String firstName;
     private String lastName;
     private Set<String> roles;
-    
+    private String locationId;
+    private String squareToken;
+    private String phone;
+    private String pos;
     @NotBlank
-    @Size(min = 6, max = 40)
     private String password;
 }

@@ -1,11 +1,14 @@
 package com.obify.hy.ims.controller;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.obify.hy.ims.dto.*;
 import com.obify.hy.ims.entity.*;
+import com.obify.hy.ims.exception.BusinessException;
 import com.obify.hy.ims.service.AuthService;
 import com.obify.hy.ims.service.impl.MerchantServiceImpl;
 import com.obify.hy.ims.util.CommonUtil;
@@ -16,16 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.obify.hy.ims.dto.LoginRequestDTO;
-import com.obify.hy.ims.dto.UserDTO;
-import com.obify.hy.ims.dto.JwtResponse;
-import com.obify.hy.ims.dto.MessageResponse;
 import com.obify.hy.ims.repository.RoleRepository;
 import com.obify.hy.ims.repository.UserRepository;
 import com.obify.hy.ims.security.jwt.JwtUtils;
@@ -57,14 +57,22 @@ public class AuthController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
-
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
+		Authentication authentication = null;
+		try {
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+		}catch (BadCredentialsException ex){
+			List<ErrorDTO> errors = List.of(new ErrorDTO("AUTH_003", "Invalid Credentials"));
+			throw new BusinessException(errors);
+		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();		
+		if(!userDetails.isActive()){
+			List<ErrorDTO> errors = List.of(new ErrorDTO("AUTH_002", "User is inactive"));
+			throw new BusinessException(errors);
+		}
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
@@ -74,7 +82,10 @@ public class AuthController {
 												 userDetails.getFirstName(),
 				                                 userDetails.getLastName(),
 												 userDetails.getEmail(),
-												 roles));
+												 roles,
+				userDetails.getLocationId(),
+				userDetails.getSquareToken(),
+				userDetails.getPos()));
 	}
 
 	@PostMapping("/signup")
@@ -147,8 +158,11 @@ public class AuthController {
 
 	@PostMapping("/signup-merchant")
 	public ResponseEntity<?> registerMerchant(@Valid @RequestBody UserDTO signUpRequest) {
+		Set<String> roles = new HashSet<>();
+		roles.add("ROLE_MERCHANT");
+		signUpRequest.setRoles(roles);
 		String userId = authService.registerUser(signUpRequest);
-		return ResponseEntity.ok(new MessageResponse("Merchant registered successfully! with Id: "+userId));
+		return new ResponseEntity<>(new MessageResponse("Merchant registered successfully! with Id: "+userId), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/signup-manager")

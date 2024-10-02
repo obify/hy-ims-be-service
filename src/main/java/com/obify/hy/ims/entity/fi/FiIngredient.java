@@ -1,6 +1,5 @@
-package com.obify.hy.ims.entity.square;
+package com.obify.hy.ims.entity.fi;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,13 +11,17 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "sqsale")
-public class SqSale {
-
+@Document(collection = "addinventory")
+public class FiIngredient {
     @Id
     private String id;
-    private String productName;
-    private Integer productCountSold;
+    private String ingredientId;
+    private String ingredient;
+    private Float quantity;
+    private Float remainingQty;
+    private String unit;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime salesToDtTime;
     private String merchantId;
 }

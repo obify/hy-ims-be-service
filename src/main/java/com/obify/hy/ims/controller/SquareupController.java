@@ -1,8 +1,11 @@
 package com.obify.hy.ims.controller;
 
+import com.obify.hy.ims.dto.square.OverviewRequestDTO;
+import com.obify.hy.ims.dto.square.RequestLocationDTO;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
 import com.obify.hy.ims.entity.square.SqSale;
+import com.obify.hy.ims.repository.square.SqSalesRepository;
 import com.obify.hy.ims.service.SquareupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,25 +21,28 @@ public class SquareupController {
 
     @Autowired
     private SquareupService squareupService;
+    @Autowired
+    private SqSalesRepository sqSalesRepository;
 
-    @GetMapping("/sq/refresh/categories")
+    @PostMapping("/sq/refresh/categories")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshCategories() {
-        String msg = squareupService.processCategoryData();
+    public ResponseEntity<String> refreshCategories(@RequestBody RequestLocationDTO locationDTO) {
+        String msg = squareupService.processCategoryData(locationDTO.getToken(), locationDTO.getMerchantId());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping("/sq/refresh/products")
+    @PostMapping("/sq/refresh/products")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshProducts() {
-        String msg = squareupService.processProductData();
+    public ResponseEntity<String> refreshProducts(@RequestBody RequestLocationDTO locationDTO) {
+        String msg = squareupService.processProductData(locationDTO.getToken(), locationDTO.getMerchantId());
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    @GetMapping("/sq/refresh/sales")
+    @PostMapping("/sq/refresh/sales")
     //@PreAuthorize("hasRole('MANAGER') or hasRole('MERCHANT') or hasRole('ADMIN')")
-    public ResponseEntity<String> refreshSales() {
-        String msg = squareupService.processSalesData();
+    public ResponseEntity<String> refreshSales(@RequestBody OverviewRequestDTO requestDTO) {
+        sqSalesRepository.deleteAllByMerchantId(requestDTO.getMerchantId());
+        String msg = squareupService.processSalesData(requestDTO);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
