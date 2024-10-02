@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FeignClientConfiguration {
 
-    @Value("${squareup.main.header}")
-    private String mainHeader;
+    //@Value("${squareup.main.header}")
+    //private String mainHeader;
 
     @Bean
     public OkHttpClient client() {
