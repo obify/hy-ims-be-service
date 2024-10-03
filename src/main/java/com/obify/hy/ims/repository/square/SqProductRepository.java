@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface SqProductRepository extends MongoRepository<SqProduct, String> {
-    Optional<SqProduct> findAllByNameContaining(String name);
+    Optional<SqProduct> findFirstByName(String name);
     void deleteAllByMerchantId(String merchantId);
 }

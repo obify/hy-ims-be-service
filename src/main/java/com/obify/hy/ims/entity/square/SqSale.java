@@ -18,6 +18,7 @@ public class SqSale {
     @Id
     private String id;
     private String productName;
+    private String imageUrl;
     private Integer productCountSold;
     private LocalDateTime updatedAt;
     private String merchantId;
