@@ -4,6 +4,7 @@ import com.obify.hy.ims.client.SquareupFeignClient;
 import com.obify.hy.ims.client.model.*;
 import com.obify.hy.ims.dto.square.OverviewRequestDTO;
 import com.obify.hy.ims.dto.square.OverviewResponseDTO;
+import com.obify.hy.ims.entity.Product;
 import com.obify.hy.ims.entity.User;
 import com.obify.hy.ims.entity.square.SqCategory;
 import com.obify.hy.ims.entity.square.SqProduct;
@@ -182,6 +183,17 @@ public class SquareupServiceImpl implements SquareupService {
                     SqSale sqSale = new SqSale();
                     sqSale.setUpdatedAt(LocalDateTime.now());
                     sqSale.setProductName(mapData.getKey());
+                    if(sqSale.getProductName() != null){
+                        Optional<SqProduct> optProduct = productRepository.findFirstByName(sqSale.getProductName());
+                        if(optProduct.isPresent() && optProduct.get().getImageUrl() != null){
+                            sqSale.setImageUrl(optProduct.get().getImageUrl());
+                        }else{
+                            sqSale.setImageUrl("https://images.unsplash.com/photo-1610513320995-1ad4bbf25e55?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bm90JTIwYXZhaWxhYmxlfGVufDB8fDB8fHww");
+                        }
+                    }else{
+                        sqSale.setProductName("NOT AVAILABLE");
+                        sqSale.setImageUrl("https://images.unsplash.com/photo-1610513320995-1ad4bbf25e55?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bm90JTIwYXZhaWxhYmxlfGVufDB8fDB8fHww");
+                    }
                     sqSale.setProductCountSold(mapData.getValue());
                     sqSale.setMerchantId(requestDTO.getMerchantId());
                     sqSalesRepository.save(sqSale);

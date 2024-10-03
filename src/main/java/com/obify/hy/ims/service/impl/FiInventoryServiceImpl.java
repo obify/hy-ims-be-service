@@ -9,6 +9,7 @@ import com.obify.hy.ims.entity.fi.Ingredient;
 import com.obify.hy.ims.entity.square.RemainingInventory;
 import com.obify.hy.ims.entity.square.SqSale;
 import com.obify.hy.ims.repository.fi.*;
+import com.obify.hy.ims.repository.square.SqProductRepository;
 import com.obify.hy.ims.repository.square.SqSalesRepository;
 import com.obify.hy.ims.service.FiInventoryService;
 import com.obify.hy.ims.service.SquareupService;
@@ -41,7 +42,9 @@ public class FiInventoryServiceImpl implements FiInventoryService {
     public OverviewResponseDTO inventoryOverview(OverviewRequestDTO requestDTO) {
         sqSalesRepository.deleteAllByMerchantId(requestDTO.getMerchantId());
         squareupService.processSalesData(requestDTO);
+        OverviewResponseDTO dto = new OverviewResponseDTO();
         List<SqSale> sales = sqSalesRepository.findAllByMerchantId(requestDTO.getMerchantId());
+        dto.setSales(sales);
         Map<String, Float> qtyMap = new HashMap<>();
         try {
             for (SqSale sale : sales) {
@@ -60,9 +63,8 @@ public class FiInventoryServiceImpl implements FiInventoryService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        OverviewResponseDTO dto = null;
+
         if(!qtyMap.isEmpty()) {
-            dto = new OverviewResponseDTO();
             List<RemainingInventory> inventories = new ArrayList<>();
             RemainingInventory fii = null;
             for(Map.Entry<String, Float> mapOfIngredientQty : qtyMap.entrySet()) {
